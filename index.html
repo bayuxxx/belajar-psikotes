@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Psikotes BCA</title>
+    <!-- Memanggil Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans p-3 sm:p-6 md:p-8">
+
+    <div class="max-w-3xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-6 sm:mb-10">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-700 mb-2 sm:mb-3">Latihan Soal Psikotes BCA</h1>
+            <p class="text-xs sm:text-sm md:text-base text-slate-500">Pilih jawaban yang menurutmu benar, lalu klik <strong class="text-slate-700">Cek Jawaban</strong> untuk melihat hasil dan pembahasannya.</p>
+        </div>
+        
+        <!-- Wadah Soal -->
+        <div id="quiz-container"></div>
+    </div>
+
+    <script src="questions.js"></script>
+    <script>
+        const container = document.getElementById('quiz-container');
+
+        questions.forEach((item, index) => {
+            // Container kartu soal
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-sm border border-slate-200';
+            
+            // Judul soal
+            const qTitle = document.createElement('div');
+            qTitle.className = 'font-semibold text-base sm:text-lg mb-3 sm:mb-4 text-slate-800 leading-relaxed break-words';
+            qTitle.textContent = item.q;
+            card.appendChild(qTitle);
+            
+            // Pilihan ganda
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'flex flex-col gap-2.5 sm:gap-3';
+            
+            for (const [key, value] of Object.entries(item.options)) {
+                const label = document.createElement('label');
+                label.className = 'flex items-start p-3 border border-slate-300 rounded-lg cursor-pointer hover:bg-blue-50 active:bg-blue-100 transition-colors text-sm sm:text-base select-none';
+                
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'question' + index;
+                radio.value = key;
+                radio.className = 'mt-0.5 mr-3 w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0';
+                
+                const textSpan = document.createElement('span');
+                textSpan.className = 'break-words min-w-0 flex-1';
+                textSpan.textContent = `${key}. ${value}`;
+
+                label.appendChild(radio);
+                label.appendChild(textSpan);
+                optionsDiv.appendChild(label);
+            }
+            card.appendChild(optionsDiv);
+            
+            // Tombol cek jawaban
+            const btn = document.createElement('button');
+            btn.className = 'mt-4 sm:mt-5 w-full sm:w-auto bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors text-sm sm:text-base';
+            btn.textContent = 'Cek Jawaban';
+            card.appendChild(btn);
+            
+            // Area feedback & pembahasan
+            const feedback = document.createElement('div');
+            feedback.className = 'mt-4 p-4 rounded-lg hidden text-sm md:text-base';
+            card.appendChild(feedback);
+            
+            // Logika tombol saat diklik
+            btn.onclick = () => {
+                const selected = document.querySelector(`input[name="question${index}"]:checked`);
+                if (!selected) {
+                    alert('Pilih jawabanmu terlebih dahulu ya!');
+                    return;
+                }
+                
+                feedback.classList.remove('hidden');
+                if (selected.value === item.answer) {
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-green-100 text-green-800 border border-green-200 text-sm md:text-base';
+                    feedback.innerHTML = `<span class="block font-bold mb-2">✅ Jawaban Anda Benar! (${item.answer})</span><span class="block text-green-900"><strong>Pembahasan:</strong> ${item.explanation}</span>`;
+                } else {
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-red-100 text-red-800 border border-red-200 text-sm md:text-base';
+                    feedback.innerHTML = `<span class="block font-bold mb-2">❌ Jawaban Anda Salah. (Kunci: ${item.answer})</span><span class="block text-red-900"><strong>Pembahasan:</strong> ${item.explanation}</span>`;
+                }
+            };
+            
+            container.appendChild(card);
+        });
+    </script>
+</body>
+</html>
